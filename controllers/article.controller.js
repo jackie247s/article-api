@@ -21,10 +21,12 @@ exports.getArticles = async function (req, res, next) {
 exports.createArticle = async function (req, res, next) {
 
     // Req.Body contains the form submit values.
+    console.log(req.body);
+    var data = JSON.parse(req.body.data);
 
     var article = {
-        title: req.body.title,
-        description: req.body.description,
+        title: data.title,
+        description: data.description,
         image: req.file.originalname
     }
 
@@ -43,21 +45,27 @@ exports.createArticle = async function (req, res, next) {
 
 exports.updateArticle = async function (req, res, next) {
 
+    var newArticle = JSON.parse(req.body.data);
+    console.log(req.body);
+
     // Id is necessary for the update
 
-    if (!req.body._id) {
-        return res.status(400).json({ status: 400., message: "Id must be present" })
+    if (!newArticle._id) {
+        return res.status(400).json({ status: 400., message: "Id must be present" });
     }
 
-    var id = req.body._id;
+    var id = newArticle._id;
 
-    console.log(req.body)
+    console.log(newArticle);
 
     var article = {
         id,
-        title: req.body.title ? req.body.title : null,
-        description: req.body.description ? req.body.description : null,
-        image: req.file.originalname ? req.file.originalname : null
+        title: newArticle.title ? newArticle.title : null,
+        description: newArticle.description ? newArticle.description : null
+    }
+
+    if(req.file){
+        article.image = req.file.originalname
     }
 
     try {
